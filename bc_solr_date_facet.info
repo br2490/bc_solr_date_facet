@@ -1,5 +1,10 @@
 name=Barnard College Solr Date Facet Settings
 description=Ben is too tired to write this, but here's to a good ole' ramble...
-version=VERSION
+version=7.x-dev
 core=7.x
 package=Barnard College Custom Islandora
+configure = admin/islandora/search/facet_settings
+files[] = bc_solr_date_facet.module
+files[] = admin.form.inc
+dependencies[] = islandora
+dependencies[] = islandora_solr

@@ -1,26 +1,42 @@
 <?php 
 
+/**
+ * Implements hook_menu().
+ */
+function bc_solr_date_facet_menu() {
+	$items['admin/islandora/search/facet_settings'] = array(
+	    'title' => 'Solr Date Facet Settings',
+	    'description' => 'Configure Solr Facet Date settings. <strong>(BC Custom)</strong>',
+	    'page callback' => 'drupal_get_form',
+	    'page arguments' => array('bc_solr_date_facet_admin_settings'),
+	    'access arguments' => array('administer islandora solr'),
+	    'file' => 'admin.form.inc',
+	    'type' => MENU_NORMAL_ITEM,
+	);
+	return($items);
+}
+
 /*
  * Implementation of hook_form_alter()
  */
 function bc_solr_date_facet_form_islandora_solr_date_filter_form_alter(&$form, &$form_state) {
-   	// DO STUFF... WITHOUT KNOWING WHAT!!!!!!
    	// ['date_filter']['date_filter']['#markup']
-   	// <div class="description">Format: 2015/11/17</div>
 	// ['date_filter']['date_filter_from']['#default_value']
-	// FIELDS (change to phpdate format Y)
 	// ['date_filter']['date_filter_to']['#default_value']
-	// FIELDS (change to phpdate format Y)
-	dsm($form);
-
-	$form['date_filter']['date_filter']['#markup'] = '<div class="description">Format: '.date('Y').'</div>';
 	
-	//do some data validation here, check to see if we're just hitting "SHOW" and therefore there is no "FROM" nor "TO"
-	//date... by doing it the way I am, we end up creating a new date ($today) and formating it to Y... which is wrong.
-	$dateFrom = new DateTime($form['date_filter']['date_filter_from']['#default_value']);
-	$form['date_filter']['date_filter_from']['#default_value'] = $dateFrom->format('Y');
-	$dateTo = new DateTime($form['date_filter']['date_filter_to']['#default_value']);
-	$form['date_filter']['date_filter_to']['#default_value'] = $dateTo->format('Y');
- }
+	$facetFormat = variable_get('bc_solr_date_facet_format', 'Y/m/d');
+
+	// Update the format helper text.
+	$form['date_filter']['date_filter']['#markup'] = '<div class="description">Format: '.date($facetFormat).'</div>';
+	
+	// Do some data validation here, check to see if we're just hitting "SHOW" and therefore there is no "FROM" nor "TO" date.
+	if (!empty($form['date_filter']['date_filter_from']['#default_value']) && !empty($form['date_filter']['date_filter_to']['#default_value'])) {
+		$dateFrom = new DateTime($form['date_filter']['date_filter_from']['#default_value']);
+		$dateTo = new DateTime($form['date_filter']['date_filter_to']['#default_value']);
+
+		$form['date_filter']['date_filter_from']['#default_value'] = $dateFrom->format($facetFormat);
+		$form['date_filter']['date_filter_to']['#default_value'] = $dateTo->format($facetFormat);
+	}
+}
 
 ?>
