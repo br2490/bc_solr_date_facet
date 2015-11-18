@@ -1,0 +1,12 @@
+<?php 
+
+/*
+ * Implementation of hook_form_alter()
+ */
+function bc_solr_date_facet_form_islandora_solr_date_filter_form_alter(&$form, &$form_state) {
+   	// DO STUFF... WITHOUT KNOWING WHAT!!!!!!
+   	dsm($form);
+   	dsm($form_state);
+ }
+
+?>
